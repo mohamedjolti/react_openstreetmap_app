@@ -1,43 +1,57 @@
-import { Marker, Popup } from "react-leaflet";
-import { Component } from "react";
-import { geolocated } from "react-geolocated";
-import {TileLayer } from "react-leaflet"
-import { Map } from 'react-leaflet';
+import React, { Component } from "react";
+import { Map, TileLayer } from "react-leaflet";
+import L from "leaflet";
 
+const height = { height: "100vh" };
+const center = { lat: 51.5, lng: 0.12 };
 
-import './App.css';
-const DEFAULT_LATITUDE=48;
-const DEFAULT_LANGITUDE=-128;
+class MapExample extends Component {
+  componentDidMount() {
+    const map = this.leafletMap.leafletElement;
+    const geocoder = L.Control.Geocoder.nominatim();
+    let marker;
 
-class App extends Component {
-
-  
-  render(){
-    const langitude= this.props.coords ? this.props.coords.longitude : DEFAULT_LANGITUDE
-    const latitude= this.props.coords ? this.props.coords.latitude : DEFAULT_LATITUDE
-  return (
-         <Map zoom={12} center={[latitude,langitude]}>
-             <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'></TileLayer>    
-        {
-          !this.props.coords?
-          <div className="loading">Loading</div>
-          :
-          <Marker position={[latitude,langitude]}>
-            <Popup>
-              Your are here
-            </Popup>
-          </Marker>
-
-         
+    map.on("click", e => {
+      geocoder.reverse(
+        e.latlng,
+        map.options.crs.scale(map.getZoom()),
+        results => {
+          var r = results[0];
+          if (r) {
+            if (marker) {
+              marker
+                .setLatLng(r.center)
+                .setPopupContent(r.html || r.name)
+                .openPopup();
+            } else {
+              marker = L.marker(r.center)
+                .bindPopup(r.name)
+                .addTo(map)
+                .openPopup();
+            }
+          }
         }
-         </Map>
-  );
-}
+      );
+    });
+  }
+
+  render() {
+    return (
+      <Map
+        style={height}
+        center={center}
+        zoom={18}
+        ref={m => {
+          this.leafletMap = m;
+        }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        />
+      </Map>
+    );
+  }
 }
 
-export default geolocated({
-  positionOptions: {
-    enableHighAccuracy: false,
-  },
-  userDecisionTimeout: 5000,
-})(App);
+export default MapExample;
