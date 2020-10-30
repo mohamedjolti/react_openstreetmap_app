@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { Marker, Popup } from "react-leaflet";
+import { Component } from "react";
+import { geolocated } from "react-geolocated";
+import {TileLayer } from "react-leaflet"
+import { Map } from 'react-leaflet';
 
-function App() {
+
+import './App.css';
+const DEFAULT_LATITUDE=48;
+const DEFAULT_LANGITUDE=-128;
+
+class App extends Component {
+
+  
+  render(){
+    const langitude= this.props.coords ? this.props.coords.longitude : DEFAULT_LANGITUDE
+    const latitude= this.props.coords ? this.props.coords.latitude : DEFAULT_LATITUDE
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+         <Map zoom={12} center={[latitude,langitude]}>
+             <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'></TileLayer>    
+        {
+          !this.props.coords?
+          <div className="loading">Loading</div>
+          :
+          <Marker position={[latitude,langitude]}>
+            <Popup>
+              Your are here
+            </Popup>
+          </Marker>
+
+         
+        }
+         </Map>
   );
 }
+}
 
-export default App;
+export default geolocated({
+  positionOptions: {
+    enableHighAccuracy: false,
+  },
+  userDecisionTimeout: 5000,
+})(App);
