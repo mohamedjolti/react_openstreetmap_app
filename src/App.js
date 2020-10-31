@@ -4,15 +4,16 @@ import { Map, TileLayer } from "react-leaflet";
 import L from "leaflet";
 
 const height = { height: "100vh" };
-const center = { lat: 35.770390, lng: -5.803610 };
+const center = { lat: 51.509865  , lng: -0.118092
+};
 
 class MapExample extends Component {
 
   state={
-        city:"Tangier",
-        temperature:295.15,
-        pressure:1024,
-        humidity:64
+        city:"London",
+        temperature:287,
+        pressure:1007,
+        humidity:78
   }
   componentDidMount() {
     const map = this.leafletMap.leafletElement; 
