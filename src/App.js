@@ -1,3 +1,4 @@
+  
 import React, { Component } from "react";
 import { Map, TileLayer } from "react-leaflet";
 import L from "leaflet";
@@ -7,7 +8,7 @@ const center = { lat: 51.5, lng: 0.12 };
 
 class MapExample extends Component {
   componentDidMount() {
-    const map = this.leafletMap.leafletElement;
+    const map = this.leafletMap.leafletElement; 
     const geocoder = L.Control.Geocoder.nominatim();
     let marker;
 
@@ -17,6 +18,8 @@ class MapExample extends Component {
         map.options.crs.scale(map.getZoom()),
         results => {
           var r = results[0];
+          console.log(r);
+          var html =r+"<button> click here</button> "
           if (r) {
             if (marker) {
               marker
